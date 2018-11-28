@@ -182,7 +182,7 @@ try
             para.SSDTotal(iTrial,:) = para.SSD;
             if accTrial == 1 && para.SSD < 1000
                 para.SSD = para.SSD + 50;
-            elseif accTrial == 0 && para.SSD > 100
+            elseif accTrial == 0 && para.SSD > 0
                 para.SSD = para.SSD - 50;
             end
         end
