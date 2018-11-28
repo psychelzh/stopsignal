@@ -85,6 +85,8 @@ try
     ListenChar(0);
     for iTrial = 1:para.nTrialTotal
         if iTrial == para.nTrialLX+1
+            % reset SSD paramter as 250 ms when real testing begins
+            para.SSD = 250;
             Screen('DrawTexture',wPtr,texid(end-1));
             Screen('Flip',wPtr);
             ListenChar(2);
