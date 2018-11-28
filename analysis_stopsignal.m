@@ -69,7 +69,7 @@ ana_vars = {'condGoStop', 'SSDTotal', 'acc', 'respTime'};
 rawdata_main = rawdata(ismember(rawdata.expType, 'main'), :);
 [grps, gids] = findgroups(rawdata_main(:, key_vars));
 [stats, labels] = splitapply(@stopsignal, rawdata_main(:, ana_vars), grps);
-res = [gids, array2table(stats, 'VariableNames', labels)];
+res = [gids, array2table(stats, 'VariableNames', labels(1, :))];
 
     function [stats, labels] = stopsignal(cond, ssd, acc, rt)
         % set go trials of too short rt as wrong
