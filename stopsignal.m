@@ -58,6 +58,8 @@ try
     wPtr = Screen('OpenWindow', para.screenNumber,para.white,[],[],[],[],4);
     Priority(MaxPriority(wPtr));
     Screen(wPtr,'BlendFunction',GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    Screen('TextSize',wPtr,60);
+    Screen('TextFont',wPtr,'Simsun');
     KbName('UnifyKeyNames');
     spaceKey = 32;
     fKey = 70;
@@ -116,22 +118,35 @@ try
         end
         Screen('Flip',wPtr);
         startTime=GetSecs*1000;
-        if para.condGoStop(iTrial,:) == 2
-            for i = 1
-                WaitSecs(para.SSD/1000);
-                sound(aud_vec, samp);
+        ListenChar(2);
+        resp_to_be_made = true;
+        while GetSecs*1000 - startTime <= para.SSD
+            [~,~,kc_ssd]=KbCheck([],1);
+            if kc_ssd(fKey) || kc_ssd(jKey)
+                kc = kc_ssd;
+                respTime=GetSecs*1000;
+                resp_to_be_made = false;
+            elseif kc_ssd(27)
+                sca;
+                ListenChar(0);
+                disp('*******************');
+                disp('***** 实验中止 *****');
+                disp('*******************');
+                return;
             end
         end
-        ListenChar(2);
+        if para.condGoStop(iTrial,:) == 2
+            sound(aud_vec, samp);
+        end
         while GetSecs*1000 - startTime <= para.stimTime
             if para.condGoStop(iTrial,:) == 1 && GetSecs*1000 - startTime >= 1000
-                Screen('TextSize',wPtr,60);
-                Screen('TextFont',wPtr,'Simsun');
                 DrawFormattedText(wPtr,double('请尽快反应！'),'center','center',para.black);
                 Screen('Flip',wPtr);
             end
-            [~,~,kc]=KbCheck([],1);
-            respTime=GetSecs*1000;
+            if resp_to_be_made
+                [~,~,kc]=KbCheck([],1);
+                respTime=GetSecs*1000;
+            end
             if kc(fKey)
                 rawResult.pressKey(iTrial,:) = 1; % press left
                 rawResult.respTime(iTrial,:) = respTime-startTime;
@@ -167,10 +182,16 @@ try
                 if ~isnan(accTrial)
                     accStrtmp = {'糟糕。反应错误！','很棒。反应正确！'};
                     accStr = accStrtmp{accTrial+1};
+                    if para.condGoStop(iTrial,:) == 1
+                        rtStr = sprintf('\n反应时：%.0f毫秒。', rawResult.respTime(iTrial,:));
+                    else
+                        rtStr = '';
+                    end
                 else
                     accStr = '哎呀。未作反应！';
+                    rtStr = '';
                 end
-                str = sprintf('%s\n反应时：%.0f 毫秒。',accStr,rawResult.respTime(iTrial,:));
+                str = [accStr, rtStr];
                 Screen('TextSize',wPtr,60);
                 Screen('TextFont',wPtr,'Simsun');
                 DrawFormattedText(wPtr,double(str),'center','center',para.black,[],0,0,2);
