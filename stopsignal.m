@@ -179,7 +179,7 @@ try
         end
         
         if para.condGoStop(iTrial,:) == 1
-            para.SSDTotal(iTrial,:) = 250;                         % Stop-Signal Delay ms
+            para.SSDTotal(iTrial,:) = nan;                         % Stop-Signal Delay ms
         elseif para.condGoStop(iTrial,:) == 2
             para.SSDTotal(iTrial,:) = para.SSD;
             if accTrial == 1 && para.SSD < 1000
