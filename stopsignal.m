@@ -224,8 +224,12 @@ try
     Screen('TextFont',wPtr,'Simsun');
     DrawFormattedText(wPtr,double(str),'center','center',para.black,[],0,0,2);
     Screen('Flip',wPtr);
-    para.filepath = [cd,filesep,'Results\' 'Exp6_stopsignal_' para.subjectInfo{1} para.subjectInfo{3} '_' para.timeString '.mat'];
-    eval(['save ' para.filepath]);
+    res_dir = 'Results';
+    if ~exist(res_dir, 'dir')
+        mkdir(res_dir)
+    end
+    para.filepath = fullfile(res_dir, ['Exp6_stopsignal_' para.subjectInfo{1} para.subjectInfo{3} '_' para.timeString '.mat']);
+    save(para.filepath)
     Screen('DrawTexture',wPtr,texid(end));
     Screen('Flip',wPtr);
     WaitSecs(0.3);
