@@ -4,12 +4,12 @@
 % 2018/10/28
 % By HLM
 
-clear all;
+clear
 try
     %============SubjectInfo===========%
     para.subjectInfo = inputdlg({'编号','中文姓名：如张三','姓名拼音：如zhangsan'},'参与者信息',1,{'01','张三','zhangsan'});
     for i = 1:length(para.subjectInfo)
-        para.subjectInfo{i}(find(isspace(para.subjectInfo{i}))) = [];
+        para.subjectInfo{i}(isspace(para.subjectInfo{i})) = [];
     end
     %===============CORLOR=============%
     para.screenNumber=max(Screen('Screens'));
@@ -72,7 +72,7 @@ try
     samp = 22254.545454;
     aud_stim = sin(1:0.25:1000);
     aud_delay = [];
-    aud_padding = [ zeros(1, round(0.005*samp)) ];	%%% Padding lasts for 5ms
+    aud_padding = zeros(1, round(0.005*samp));	%%% Padding lasts for 5ms
     aud_vec = [  aud_delay  aud_padding  aud_stim  0 ];	% Vector fed into SND
     tic;
     %% Main Exp
@@ -81,7 +81,7 @@ try
     ListenChar(2);
     while 1
         [~,~,kc]=KbCheck([],1);
-        if kc(spaceKey) break; end
+        if kc(spaceKey), break; end
         WaitSecs(0.01);
     end
     ListenChar(0);
@@ -94,7 +94,7 @@ try
             ListenChar(2);
             while 1
                 [~,~,kc]=KbCheck([],1);
-                if kc(32) break; end
+                if kc(32), break; end
                 WaitSecs(0.01);
             end
             ListenChar(0);
