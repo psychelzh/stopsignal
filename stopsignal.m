@@ -44,7 +44,37 @@ try
         repmat(stop_left(1:2),para.nTrialLX/8,1);repmat(stop_right(1:2),para.nTrialLX/8,1)],2,1)];
     para.cond = [reshape(repmat([1,2],(para.goRepeat+para.stopRepeat)/2,1),para.goRepeat+para.stopRepeat,1),repmat([repmat(go_left(1:2),go_left(end),1);repmat(go_right(1:2),go_right(end),1);
         repmat(stop_left(1:2),stop_left(end),1);repmat(stop_right(1:2),stop_right(end),1)],2,1)];
-    para.randCond = [para.condLX(Shuffle(1:length(para.condLX)),:);para.cond(Shuffle(1:length(para.cond)),:)];
+    condLX_shuffle = para.condLX(Shuffle(1:length(para.condLX)),:);
+    % ensure no more than 6 consecutive go/stop trials
+    while true
+        cond_shuffle = para.cond(Shuffle(1:length(para.cond)), :);
+        still_failed = false;
+        % simulating run length encoding
+        val = [];
+        len = 0;
+        for i_trial = 1:size(cond_shuffle, 1)
+            if i_trial == 1
+                val = cond_shuffle(1, 2);
+                len = 1;
+                continue
+            end
+            current_value = cond_shuffle(i_trial, 2);
+            if current_value == val
+                len = len + 1;
+            else
+                val = current_value;
+                len = 1;
+            end
+            if len > 6
+                still_failed = true;
+                break
+            end
+        end
+        if ~still_failed
+            break
+        end
+    end
+    para.randCond = [condLX_shuffle; cond_shuffle];
     para.condPart = para.randCond(:,1);     % part1 or part2
     para.condGoStop = para.randCond(:,2);   % go or stop
     para.condLR = para.randCond(:,3);       % left or right,1 == left,2 == right.
